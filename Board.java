@@ -1,4 +1,4 @@
-public class Interface {
+public class Board implements Cloneable{
 
     private int height;
     private int width;
@@ -14,7 +14,7 @@ public class Interface {
      * @param height
      * @param blank
      */
-    public Interface(int width, int height, int blank) throws Exception{
+    public Board(int width, int height, int blank) throws Exception{
         if(blank >= width*height)throw new Exception();
         int number = 0;
         int[][] board = new int[height][width];
@@ -35,19 +35,19 @@ public class Interface {
         this.blank = blank;
     }
 
-    public void print_board(int[][] b){
+    public void print_board(){
         for(int i = 0 ; i < this.height ; i++){
             System.out.print("|");
             for(int j = 0 ; j < this.width ; j++){
-                System.out.print(b[i][j]);
+                System.out.print(this.board[i][j]);
                 System.out.print("|");
             }
             System.out.println(" ");
         }
-        return;
     }
 
-    public int[][] move(int[][] b, Direction d, int blank) throws ArrayIndexOutOfBoundsException{
+    public void move(Direction d) throws ArrayIndexOutOfBoundsException{
+        this.blank = whereisblank();
         int row = blank/this.width;
         int col = blank%this.width;
         switch (d) {
@@ -56,8 +56,8 @@ public class Interface {
                     System.err.println("Error move to NORTH is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
-                b[row][col]=b[row-1][col];
-                b[row-1][col]=-1;
+                this.board[row][col]=this.board[row-1][col];
+                this.board[row-1][col]=-1;
                 this.blank = this.blank - width;
                 break;
 
@@ -66,8 +66,8 @@ public class Interface {
                     System.err.println("Error move to SOUTH is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
-                b[row][col]=b[row+1][col];
-                b[row+1][col]=-1;
+                this.board[row][col]=this.board[row+1][col];
+                this.board[row+1][col]=-1;
                 this.blank = this.blank + width;
                 break;
             case EAST:
@@ -75,8 +75,8 @@ public class Interface {
                     System.err.println("Error move to EAST is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
-                b[row][col]=b[row][col+1];
-                b[row][col+1]=-1;
+                this.board[row][col]=this.board[row][col+1];
+                this.board[row][col+1]=-1;
                 this.blank = this.blank + 1;
                 break;
 
@@ -85,30 +85,31 @@ public class Interface {
                     System.err.println("Error move to WEST is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
-                b[row][col]=b[row][col-1];
-                b[row][col-1]=-1;
+                this.board[row][col]=this.board[row][col-1];
+                this.board[row][col-1]=-1;
                 this.blank = this.blank - 1;
                 break;        
         
             default:
                 break;
         }
-        return b;
     }
 
-    public boolean check_final(int[][] b, int blank){
+    public boolean check_final(){
         int number = 0;
         for(int i = 0 ; i < this.height ; i++){
             for(int j = 0 ; j < this.width ; j++){
-                if(b[i][j]  != number && number != blank)return false;
+                if(this.board[i][j]  != number && number != this.blank) {
+                    return false;
+                }
                 number++;
             }
         }
         return true;
     }
 
-    public int[][] random_conf(int[][] b, int numberShuffle){
-        Direction d;       
+    public void random_conf(int numberShuffle){
+        Direction d;
         for(int i = 0 ; i < numberShuffle ; i++){
             int rand = (int)(Math.random() * (10)%4);
             switch (rand) {
@@ -127,13 +128,22 @@ public class Interface {
                     break;
             }
             try {
-                b = move(b, d, this.getBlank());
+                move(d);
             }catch(ArrayIndexOutOfBoundsException e){
                 //e.printStackTrace();
             }
         }
-        this.board = b;
-        return b;
+    }
+
+    private int whereisblank(){
+        int bl = 0;
+        for(int i = 0 ; i < this.height ; i++){
+            for(int j = 0 ; j < this.width ; j++){
+                if(this.board[i][j]  == -1)return bl;
+                bl++;
+            }
+        }
+        return -1;
     }
 
     public int[][] getBoard(){
@@ -142,5 +152,19 @@ public class Interface {
 
     public int getBlank(){
         return this.blank;
+    }
+
+    public Board clone() {
+        Object o = null;
+        try {
+            o = super.clone();
+        } catch (CloneNotSupportedException cnse) {
+            cnse.printStackTrace(System.err);
+        }
+        return (Board) o;
+    }
+
+    public void setBoard(int[][] copy){
+        this.board = copy;
     }
 }
