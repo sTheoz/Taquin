@@ -14,7 +14,8 @@ public class Interface {
      * @param height
      * @param blank
      */
-    public Interface(int width, int height, int blank){
+    public Interface(int width, int height, int blank) throws Exception{
+        if(blank >= width*height)throw new Exception();
         int number = 0;
         int[][] board = new int[height][width];
         for(int i = 0; i < height; i++){
@@ -46,14 +47,14 @@ public class Interface {
         return;
     }
 
-    public int[][] move(int[][] b, Direction d){
-        int row = this.blank/this.width;
-        int col = this.blank%this.width;
+    public int[][] move(int[][] b, Direction d, int blank) throws ArrayIndexOutOfBoundsException{
+        int row = blank/this.width;
+        int col = blank%this.width;
         switch (d) {
             case NORTH:
                 if(row == 0){
                     System.err.println("Error move to NORTH is impossible");
-                    break;
+                    throw new ArrayIndexOutOfBoundsException();
                 }
                 b[row][col]=b[row-1][col];
                 b[row-1][col]=-1;
@@ -61,19 +62,18 @@ public class Interface {
                 break;
 
             case SOUTH:
-                if(row == this.height-1){
+                if(row >= this.height-1){
                     System.err.println("Error move to SOUTH is impossible");
-                    break;
+                    throw new ArrayIndexOutOfBoundsException();
                 }
                 b[row][col]=b[row+1][col];
                 b[row+1][col]=-1;
                 this.blank = this.blank + width;
                 break;
             case EAST:
-
-                if(col == this.width-1){
+                if(col >= this.width-1){
                     System.err.println("Error move to EAST is impossible");
-                    break;
+                    throw new ArrayIndexOutOfBoundsException();
                 }
                 b[row][col]=b[row][col+1];
                 b[row][col+1]=-1;
@@ -83,7 +83,7 @@ public class Interface {
             case WEST:
                 if(col == 0){
                     System.err.println("Error move to WEST is impossible");
-                    break;
+                    throw new ArrayIndexOutOfBoundsException();
                 }
                 b[row][col]=b[row][col-1];
                 b[row][col-1]=-1;
@@ -112,9 +112,6 @@ public class Interface {
         for(int i = 0 ; i < numberShuffle ; i++){
             int rand = (int)(Math.random() * (10)%4);
             switch (rand) {
-                case 0:
-                    d = Direction.NORTH;
-                    break;
                 case 1:
                     d = Direction.SOUTH;
                     break;
@@ -129,7 +126,11 @@ public class Interface {
                     d = Direction.NORTH;
                     break;
             }
-            b = move(b, d);
+            try {
+                b = move(b, d, this.getBlank());
+            }catch(ArrayIndexOutOfBoundsException e){
+                //e.printStackTrace();
+            }
         }
         this.board = b;
         return b;
