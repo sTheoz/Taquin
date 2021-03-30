@@ -17,18 +17,12 @@ public class Search {
         int count = 0;
         queue.add(this.getBoard());
         while(!queue.isEmpty()){
-            //System.out.println(st.toString());
             currentBoard = queue.remove();
             if (currentBoard.check_final()) {
                 System.out.println("Fin de parcours YES! Nombre d'itérations: " + count);
                 return true;
             }
             count++;
-            //if(count % 10000 == 0)System.out.println(count);
-            /*System.out.println("NOOOOOOOOOW");
-            currentBoard.print_board();
-            System.out.println("------------");*/
-
             try {
                 //System.out.println("NOOOORD");
                 currentBoard.move(Board.Direction.NORTH);
@@ -147,7 +141,7 @@ public class Search {
         return false;
     }
 
-    public boolean profondeur_d_abord(int depth) {
+    public boolean profondeur_limite(int depth) {
         Stack<Board> st = new Stack<Board>();
         Stack<String[]> stck = new Stack<String[]>();
         Board currentBoard;
@@ -159,7 +153,7 @@ public class Search {
         stck.push(key);
         while(!st.empty()){
             currentBoard = st.pop();
-            while (!stck.empty() && Integer.parseInt((key = stck.pop())[0]) > depth){
+            while (Integer.parseInt((key = stck.pop())[0]) > depth && !st.empty()){
                 currentBoard = st.pop();
             }
             if(stck.empty() && Integer.parseInt(key[0]) > depth)return false;
@@ -169,7 +163,6 @@ public class Search {
                 return true;
             }
             count++;
-
             try {
                 currentBoard.move(Board.Direction.NORTH);
                 tempBoard = currentBoard.clone();
@@ -191,7 +184,6 @@ public class Search {
                 tempkey[1] = key[1]+"S";
                 stck.push(Arrays.copyOf(tempkey,2));
                 currentBoard.move(Board.Direction.NORTH);
-
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -204,7 +196,6 @@ public class Search {
                 tempkey[1] = key[1]+"W";
                 stck.push(Arrays.copyOf(tempkey,2));
                 currentBoard.move(Board.Direction.EAST);
-
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -219,13 +210,85 @@ public class Search {
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
-
         }
         return false;
     }
 
+    public boolean profondeur_iterative(){
+        int depth = 0;
+        boolean res;
+        while(!(res=profondeur_limite(depth)))depth++;
+        return res;
+    }
+
     public Board getBoard(){
         return this.board;
+    }
+
+    public boolean mal_placees(){
+        PrioList list = new PrioList();
+        Board currentBoard = this.board;
+        Board tempBoard;
+        list.addElement(currentBoard, 99, 0, "");
+        Couple currentCouple;
+        int count = 0;
+        while(!list.isEmpty()){
+            currentCouple = list.getFirst();
+            currentBoard = currentCouple.getBoard();
+            if (currentBoard.check_final()) {
+                System.out.println("Fin de parcours YES! Nombre d'itérations: " + count);
+                System.out.println(currentCouple.getDepth() + " nombres de profondeurs avec le chemin " + currentCouple.getPath());
+                return true;
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.NORTH);
+                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.SOUTH);
+                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
+
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.EAST);
+                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.WEST);
+                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            count++;
+        }
+        return false;
+    }
+
+    public int heuristique1(Board b){
+        int[][] board = b.getBoard();
+        int value = 0;
+        int count = 0;
+        for (int[] ints : board) {
+            for (int anInt : ints) {
+                if (anInt != count) value++;
+                count++;
+            }
+        }
+        return value;
     }
 
     public int getBlank(int[][] b){
