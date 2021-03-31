@@ -11,12 +11,12 @@ public class PrioList {
     }
 
     public void addElement(Board b, int val, int depth, String path){
-        Iterator<Couple> it = this.queue.iterator();
-        Couple current;
         int index = 0;
-        while(it.hasNext()){
-            current = it.next();
-            if(current.getValue() < val)this.queue.add(index, new Couple(b, val, depth, path));
+        for(Couple c: this.queue){
+            if(c.getValue() > val){
+                this.queue.add(index, new Couple(b, val, depth, path));
+                return;
+            }
             index++;
         }
         this.queue.addLast(new Couple(b, val, depth, path));
@@ -28,5 +28,9 @@ public class PrioList {
 
     public boolean isEmpty(){
         return this.queue.isEmpty();
+    }
+
+    public int size(){
+        return this.queue.size();
     }
 }

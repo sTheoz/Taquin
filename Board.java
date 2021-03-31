@@ -3,6 +3,7 @@ public class Board implements Cloneable{
     private int height;
     private int width;
     private int blank;
+    private int initBlank;
     private int count;
     private int[][] board;
 
@@ -33,6 +34,7 @@ public class Board implements Cloneable{
         this.width = width;
         this.height = height;
         this.blank = blank;
+        this.initBlank = blank;
     }
 
     public void print_board(){
@@ -135,7 +137,7 @@ public class Board implements Cloneable{
         }
     }
 
-    private int whereisblank(){
+    public int whereisblank(){
         int bl = 0;
         for(int i = 0 ; i < this.height ; i++){
             for(int j = 0 ; j < this.width ; j++){
@@ -151,7 +153,7 @@ public class Board implements Cloneable{
     }
 
     public int getBlank(){
-        return this.blank;
+        return this.initBlank;
     }
 
     public Board clone() {

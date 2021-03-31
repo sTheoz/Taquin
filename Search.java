@@ -1,7 +1,5 @@
-import java.util.AbstractQueue;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Stack;
+import java.util.*;
+import java.util.function.Function;
 
 public class Search {
     private Board board;
@@ -278,6 +276,112 @@ public class Search {
         return false;
     }
 
+    public boolean distance_algo(){
+        PrioList list = new PrioList();
+        Board currentBoard = this.board;
+        Board tempBoard;
+        list.addElement(currentBoard, 99, 0, "");
+        Couple currentCouple;
+        int count = 0;
+        while(!list.isEmpty()){
+            currentCouple = list.getFirst();
+            currentBoard = currentCouple.getBoard();
+            if (currentBoard.check_final()) {
+                System.out.println("Fin de parcours YES! Nombre d'itérations: " + count);
+                System.out.println(currentCouple.getDepth() + " nombres de profondeurs avec le chemin " + currentCouple.getPath());
+                return true;
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.NORTH);
+                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.SOUTH);
+                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
+
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.EAST);
+                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.WEST);
+                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            count++;
+        }
+        return false;
+    }
+
+    public boolean full_algo(){
+        PrioList list = new PrioList();
+        Board currentBoard = this.board;
+        Board tempBoard;
+        list.addElement(currentBoard, 99, 0, "");
+        Couple currentCouple;
+        int count = 0;
+        while(!list.isEmpty()){
+            currentCouple = list.getFirst();
+            currentBoard = currentCouple.getBoard();
+            if (currentBoard.check_final()) {
+                System.out.println("Fin de parcours YES! Nombre d'itérations: " + count);
+                System.out.println(currentCouple.getDepth() + " nombres de profondeurs avec le chemin " + currentCouple.getPath());
+                return true;
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.NORTH);
+                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.SOUTH);
+                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
+
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.EAST);
+                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            try {
+                tempBoard = currentBoard.clone();
+                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
+                tempBoard.move(Board.Direction.WEST);
+                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
+            }catch (ArrayIndexOutOfBoundsException e){
+                // nothing
+            }
+            count++;
+        }
+        return false;
+    }
+
     public int heuristique1(Board b){
         int[][] board = b.getBoard();
         int value = 0;
@@ -291,16 +395,79 @@ public class Search {
         return value;
     }
 
-    public int getBlank(int[][] b){
-        int c = 0;
-        for (int[] ints : b) {
+    public int heuristique2(Board b){
+        int[][] board = b.getBoard();
+        int value = 0;
+        int count = 0;
+        for (int[] ints : board) {
             for (int anInt : ints) {
-                if (anInt == -1) return c;
-                c++;
+                if(anInt != count){
+                    if(anInt == -1)anInt=b.getBlank();
+                    //System.out.println("Distance: " + distance(count, ints.length, anInt));
+                    value = value + distance(count, ints.length, anInt);
+                }
+                count++;
+            }
+        }
+        return value;
+    }
+
+    public int heuristique3(Board b){
+        int[][] board = b.getBoard();
+        int value = 0;
+        int count = 0;
+        int successor;
+        for(int[] ints: board){
+            for(int anInt: ints){
+                if(anInt == -1)anInt=8;
+                if(count == 4){
+                    if( anInt != 8) {
+                        value += 1;
+                    }
+                }else{
+                    successor = getSuccessorValue(board, count);
+                    if((count+1) != successor)value += 2;
+                }
+                count++;
+            }
+        }
+        return 3*value + heuristique2(b);
+    }
+
+    private int getSuccessorValue(int[][] b, int index){
+        int i = 0;
+        for(int[] row: b){
+            for(int col: row){
+                if((index+1) == row.length*row.length)index=0;
+                if((index+1) == i)return col;
+                i++;
             }
         }
         return -1;
     }
+
+   public int distance(int temp, int width, int target){
+        int value = 0;
+       if(target%width != temp%width){
+           while( (temp%(width)) < (target%(width)) ){
+               temp =temp + 1;
+               value = value + 1;
+           }
+           while( (temp%(width)) > (target%(width)) ){
+               temp = temp - 1;
+               value = value + 1;
+           }
+       }
+       while(temp < target){
+           temp = temp + width;
+           value = value + 1;
+       }
+       while(temp > target){
+           temp = temp - width;
+           value = value + 1;
+       }
+       return value;
+   }
 
     int[][] deepCopy(int[][] matrix) {
         return java.util.Arrays.stream(matrix).map(el -> el.clone()).toArray($ -> matrix.clone());
