@@ -1,3 +1,5 @@
+package taquin;
+
 public class Couple {
     private Board board;
     private int value;

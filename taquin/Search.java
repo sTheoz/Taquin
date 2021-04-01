@@ -1,3 +1,5 @@
+package taquin;
+
 import java.util.*;
 import java.util.function.Function;
 
@@ -85,12 +87,9 @@ public class Search {
                 return true;
             }
             count++;
-            System.out.println("NOOOOOOOOOW");
             currentBoard.print_board();
-            System.out.println("------------");
-
             try {
-                System.out.println("NOOOORD");
+                Main.logger.info("NORD");
                 currentBoard.move(Board.Direction.NORTH);
                 currentBoard.print_board();
                 tempBoard = currentBoard.clone();
@@ -101,7 +100,7 @@ public class Search {
                 // nothing
             }
             try {
-                System.out.println("SUUUUD");
+                Main.logger.info("SUD");
                 currentBoard.move(Board.Direction.SOUTH);
                 currentBoard.print_board();
                 tempBoard = currentBoard.clone();
@@ -113,7 +112,7 @@ public class Search {
                 // nothing
             }
             try {
-                System.out.println("WEEEEEST");
+                Main.logger.info("WEST");
                 currentBoard.move(Board.Direction.WEST);
                 currentBoard.print_board();
                 tempBoard = currentBoard.clone();
@@ -125,7 +124,7 @@ public class Search {
                 // nothing
             }
             try {
-                System.out.println("ESSSSST");
+                Main.logger.info("EST");
                 currentBoard.move(Board.Direction.EAST);
                 currentBoard.print_board();
                 tempBoard = currentBoard.clone();
@@ -223,11 +222,11 @@ public class Search {
         return this.board;
     }
 
-    public boolean mal_placees(){
+    public boolean mal_placees(Heuritisque functHeur){
         PrioList list = new PrioList();
         Board currentBoard = this.board;
         Board tempBoard;
-        list.addElement(currentBoard, 99, 0, "");
+        list.addElement(currentBoard, 0, 0, "");
         Couple currentCouple;
         int count = 0;
         while(!list.isEmpty()){
@@ -242,7 +241,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.NORTH);
-                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
+                list.addElement(tempBoard, currentCouple.getValue() + functHeur.execute(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -250,7 +249,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.SOUTH);
-                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
+                list.addElement(tempBoard,currentCouple.getValue() +  functHeur.execute(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
 
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
@@ -259,7 +258,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.EAST);
-                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
+                list.addElement(tempBoard, currentCouple.getValue() + functHeur.execute(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -267,7 +266,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.WEST);
-                list.addElement(tempBoard, heuristique1(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
+                list.addElement(tempBoard, currentCouple.getValue() + functHeur.execute(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -280,7 +279,7 @@ public class Search {
         PrioList list = new PrioList();
         Board currentBoard = this.board;
         Board tempBoard;
-        list.addElement(currentBoard, 99, 0, "");
+        list.addElement(currentBoard, 0, 0, "");
         Couple currentCouple;
         int count = 0;
         while(!list.isEmpty()){
@@ -295,7 +294,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.NORTH);
-                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
+                list.addElement(tempBoard,currentCouple.getValue() +  heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -303,7 +302,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.SOUTH);
-                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
+                list.addElement(tempBoard, currentCouple.getValue() + heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
 
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
@@ -312,7 +311,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.EAST);
-                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
+                list.addElement(tempBoard,currentCouple.getValue() +  heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -320,7 +319,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.WEST);
-                list.addElement(tempBoard, heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
+                list.addElement(tempBoard, currentCouple.getValue() + heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -333,7 +332,7 @@ public class Search {
         PrioList list = new PrioList();
         Board currentBoard = this.board;
         Board tempBoard;
-        list.addElement(currentBoard, 99, 0, "");
+        list.addElement(currentBoard, 0, 0, "");
         Couple currentCouple;
         int count = 0;
         while(!list.isEmpty()){
@@ -348,7 +347,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.NORTH);
-                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
+                list.addElement(tempBoard,currentCouple.getValue() +  heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -356,7 +355,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.SOUTH);
-                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
+                list.addElement(tempBoard,currentCouple.getValue() +  heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
 
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
@@ -365,7 +364,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.EAST);
-                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
+                list.addElement(tempBoard,currentCouple.getValue() +  heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -373,7 +372,7 @@ public class Search {
                 tempBoard = currentBoard.clone();
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.WEST);
-                list.addElement(tempBoard, heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
+                list.addElement(tempBoard, currentCouple.getValue() + heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
@@ -403,7 +402,6 @@ public class Search {
             for (int anInt : ints) {
                 if(anInt != count){
                     if(anInt == -1)anInt=b.getBlank();
-                    //System.out.println("Distance: " + distance(count, ints.length, anInt));
                     value = value + distance(count, ints.length, anInt);
                 }
                 count++;
@@ -415,35 +413,45 @@ public class Search {
     public int heuristique3(Board b){
         int[][] board = b.getBoard();
         int value = 0;
-        int count = 0;
-        int successor;
-        for(int[] ints: board){
-            for(int anInt: ints){
-                if(anInt == -1)anInt=8;
-                if(count == 4){
-                    if( anInt != 8) {
-                        value += 1;
-                    }
-                }else{
-                    successor = getSuccessorValue(board, count);
-                    if((count+1) != successor)value += 2;
+        int succ;
+        for(int i = 0; i < 9 ; i++){
+            if( (i == 4) && (board[1][1] != 4) ){
+                value += 1;
+            }else {
+                succ = board[getSuccessorIndex(i)/3][getSuccessorIndex(i)%3];
+                if(succ == -1)succ=8;
+                if(succ != getSuccessorIndex(board[i/3][i%3])){
+                    value += 2;
                 }
-                count++;
             }
         }
         return 3*value + heuristique2(b);
     }
 
-    private int getSuccessorValue(int[][] b, int index){
-        int i = 0;
-        for(int[] row: b){
-            for(int col: row){
-                if((index+1) == row.length*row.length)index=0;
-                if((index+1) == i)return col;
-                i++;
-            }
+    private int getSuccessorIndex(int index){
+        if(index == -1)index=8;
+        switch (index){
+            case 0:
+                return 1;
+            case 1:
+                return 2;
+            case 2:
+                return 5;
+            case 3:
+                return 0;
+            case 4:
+                return 4;
+            case 5:
+                return 8;
+            case 6:
+                return 3;
+            case 7:
+                return 6;
+            case -8:
+                return 7;
+            default:
+                return 0;
         }
-        return -1;
     }
 
    public int distance(int temp, int width, int target){
@@ -471,5 +479,9 @@ public class Search {
 
     int[][] deepCopy(int[][] matrix) {
         return java.util.Arrays.stream(matrix).map(el -> el.clone()).toArray($ -> matrix.clone());
+    }
+
+    public interface Heuritisque {
+        public int execute(Board boarg);
     }
 }

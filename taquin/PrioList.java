@@ -1,5 +1,5 @@
-import java.util.ArrayDeque;
-import java.util.Iterator;
+package taquin;
+
 import java.util.LinkedList;
 
 public class PrioList {
@@ -7,13 +7,13 @@ public class PrioList {
     private LinkedList<Couple> queue;
 
     public PrioList(){
-        this.queue = new LinkedList<Couple>();
+        this.queue = new LinkedList<>();
     }
 
     public void addElement(Board b, int val, int depth, String path){
         int index = 0;
         for(Couple c: this.queue){
-            if(c.getValue() > val){
+            if(val < c.getValue()){
                 this.queue.add(index, new Couple(b, val, depth, path));
                 return;
             }

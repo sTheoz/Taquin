@@ -1,3 +1,5 @@
+package taquin;
+
 public class Board implements Cloneable{
 
     private int height;
@@ -55,7 +57,7 @@ public class Board implements Cloneable{
         switch (d) {
             case NORTH:
                 if(row == 0){
-                    System.err.println("Error move to NORTH is impossible");
+                    Main.logger.info("Error move to NORTH is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
                 this.board[row][col]=this.board[row-1][col];
@@ -65,7 +67,7 @@ public class Board implements Cloneable{
 
             case SOUTH:
                 if(row >= this.height-1){
-                    System.err.println("Error move to SOUTH is impossible");
+                    Main.logger.info("Error move to SOUTH is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
                 this.board[row][col]=this.board[row+1][col];
@@ -74,7 +76,7 @@ public class Board implements Cloneable{
                 break;
             case EAST:
                 if(col >= this.width-1){
-                    System.err.println("Error move to EAST is impossible");
+                    Main.logger.info("Error move to EAST is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
                 this.board[row][col]=this.board[row][col+1];
@@ -84,7 +86,7 @@ public class Board implements Cloneable{
 
             case WEST:
                 if(col == 0){
-                    System.err.println("Error move to WEST is impossible");
+                    Main.logger.info("Error move to WEST is impossible");
                     throw new ArrayIndexOutOfBoundsException();
                 }
                 this.board[row][col]=this.board[row][col-1];
