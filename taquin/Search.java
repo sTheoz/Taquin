@@ -222,7 +222,7 @@ public class Search {
         return this.board;
     }
 
-    public boolean mal_placees(Heuritisque functHeur){
+    public boolean astar(Heuritisque functHeur){
         PrioList list = new PrioList();
         Board currentBoard = this.board;
         Board tempBoard;
@@ -267,112 +267,6 @@ public class Search {
                 tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
                 tempBoard.move(Board.Direction.WEST);
                 list.addElement(tempBoard, currentCouple.getValue() + functHeur.execute(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            count++;
-        }
-        return false;
-    }
-
-    public boolean distance_algo(){
-        PrioList list = new PrioList();
-        Board currentBoard = this.board;
-        Board tempBoard;
-        list.addElement(currentBoard, 0, 0, "");
-        Couple currentCouple;
-        int count = 0;
-        while(!list.isEmpty()){
-            currentCouple = list.getFirst();
-            currentBoard = currentCouple.getBoard();
-            if (currentBoard.check_final()) {
-                System.out.println("Fin de parcours YES! Nombre d'itérations: " + count);
-                System.out.println(currentCouple.getDepth() + " nombres de profondeurs avec le chemin " + currentCouple.getPath());
-                return true;
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.NORTH);
-                list.addElement(tempBoard,currentCouple.getValue() +  heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.SOUTH);
-                list.addElement(tempBoard, currentCouple.getValue() + heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
-
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.EAST);
-                list.addElement(tempBoard,currentCouple.getValue() +  heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.WEST);
-                list.addElement(tempBoard, currentCouple.getValue() + heuristique2(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            count++;
-        }
-        return false;
-    }
-
-    public boolean full_algo(){
-        PrioList list = new PrioList();
-        Board currentBoard = this.board;
-        Board tempBoard;
-        list.addElement(currentBoard, 0, 0, "");
-        Couple currentCouple;
-        int count = 0;
-        while(!list.isEmpty()){
-            currentCouple = list.getFirst();
-            currentBoard = currentCouple.getBoard();
-            if (currentBoard.check_final()) {
-                System.out.println("Fin de parcours YES! Nombre d'itérations: " + count);
-                System.out.println(currentCouple.getDepth() + " nombres de profondeurs avec le chemin " + currentCouple.getPath());
-                return true;
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.NORTH);
-                list.addElement(tempBoard,currentCouple.getValue() +  heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"N");
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.SOUTH);
-                list.addElement(tempBoard,currentCouple.getValue() +  heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"S");
-
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.EAST);
-                list.addElement(tempBoard,currentCouple.getValue() +  heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"E");
-            }catch (ArrayIndexOutOfBoundsException e){
-                // nothing
-            }
-            try {
-                tempBoard = currentBoard.clone();
-                tempBoard.setBoard(this.deepCopy(currentBoard.getBoard()));
-                tempBoard.move(Board.Direction.WEST);
-                list.addElement(tempBoard, currentCouple.getValue() + heuristique3(tempBoard), currentCouple.getDepth()+1, currentCouple.getPath()+"W");
             }catch (ArrayIndexOutOfBoundsException e){
                 // nothing
             }
